@@ -59,8 +59,6 @@ void drawPoint(double x, double y, int flag)
 
 void drawLine(double x1, double y1, double x2, double y2)
 {
-    //std::cout << x1 << " | " << y1 << " | " << x2 << " | " << y2 << std::endl;
-
     glLineWidth(2.5);
     glColor3f(0, 0, 0);
     glBegin(GL_LINES);
@@ -99,23 +97,16 @@ void trajectoryCalculation()
     std::cout << "ZN OG: " << zn.real() << " | " << zn.imag() << std::endl;
     std::complex<double> zSqr(0.0, 0.0);
     points.clear();
-    
-    //zn.real(0.0);
-    //zn.imag(0.0);
-    
-    std::cout << "LIST SIZE: " << points.size() << std::endl;
 
     points.push_back(zn);
-    std::cout << "LIST [0]: " << points[0].real() << " | " << points[0].imag() << std::endl;
 
     std::complex<double> tempZn = zn;
-    int i = 8;
+    int i = 50;
     while (i != 0)
     {
         --i;
         zSqr = pow(tempZn, 2);
         tempZn = zSqr + complex;
-        std::cout << "Zn = " << zSqr.real() << " | " << zSqr.imag() << "        Complex =  " << complex.real() << " | " << complex.imag() << std::endl;
         points.push_back(tempZn);
     }
 }
@@ -126,7 +117,6 @@ void trajectoryDisplay()
 
     if (points.size() == 0)
     {
-        std::cout << "IS EMPTY" << std::endl;
         return;
     }
 
@@ -161,21 +151,16 @@ void mouse(int btn, int state, int x, int y)
     }
 
     // Trigger C movement
-    if (btn == GLUT_RIGHT_BUTTON && state==GLUT_DOWN)
+    if (btn == GLUT_RIGHT_BUTTON)
     {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        xOrigin = -1;
-        double nx = (x - 250) * 2 / 500.0;
-        double ny = (250 - y) * 2 / 500.0;
-        
-        //std::cout << points[0].real() << " : " << zn.real() << std::endl;
-        
-        zn.real(nx);
-        zn.imag(ny);
-        //trajectoryDisplay();
-        // Clear screen
-        
-        drawPoint(complex.real(), complex.imag(), true);
+        if (state == GLUT_UP)
+        {
+            xOrigin = -1;
+        }
+        else
+        {
+            xOrigin = 2;
+        }
     }
 }
 
@@ -192,6 +177,19 @@ void mouseMove(int x, int y)
 
         complex.real(nx);
         complex.imag(ny);
+        trajectoryDisplay();
+    }
+    
+    if (xOrigin == 2)
+    {
+        // Clear screen
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
+        double nx = (x - 250) * 2 / 500.0;
+        double ny = (250 - y) * 2 / 500.0;
+        
+        zn.real(nx);
+        zn.imag(ny);
         trajectoryDisplay();
     }
     
