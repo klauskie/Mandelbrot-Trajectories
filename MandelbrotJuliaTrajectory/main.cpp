@@ -17,18 +17,43 @@
 
 int ww=500,wh=500;
 int xi,yi,xf,yf;
+const double PI = 3.1416;
 
-std::complex<double> complex(-0.3, 0.45);
+std::complex<double> complex(0.31, 0.45);
 std::complex<double> zn(-0.7, 0.45);
 
 std::vector<std::complex<double>> points;
 
+void drawPoint(double x, double y, bool isImportant)
+{
+    if (isImportant) {
+        std::cout << "drawPoint x= " << x << std::endl;
+        glColor3f(1, 0, 0);
+        glBegin(GL_QUADS);
+            glVertex2d(x-0.02, y-0.02);
+            glVertex2d(x-0.02, y+0.02);
+            glVertex2d(x+0.02, y+0.02);
+            glVertex2d(x+0.02, y-0.02);
+        glEnd();
+    } else {
+        glColor3f(0, 0, 1);
+        glBegin(GL_QUADS);
+            glVertex2d(x-0.01, y-0.01);
+            glVertex2d(x-0.01, y+0.01);
+            glVertex2d(x+0.01, y+0.01);
+            glVertex2d(x+0.01, y-0.01);
+        glEnd();
+    }
+    
+    
+}
 
 void drawLine(double x1,double y1,double x2,double y2)
 {
     //std::cout << x1 << " | " << y1 << " | " << x2 << " | " << y2 << std::endl;
-    glLineWidth(2.0);
-    glColor3f(1,1,1);
+    
+    glLineWidth(2.5);
+    glColor3f(0,0,0);
     glBegin(GL_LINES);
         glVertex2d(x1,y1);
         glVertex2d(x2,y2);
@@ -84,7 +109,12 @@ void trajectoryDisplay()
         double pointBy = points[i+1].imag();
         
         drawLine(pointAx, pointAy, pointBx, pointBy);
+        drawPoint(pointAx, pointAy, i==0);
     }
+    
+    drawPoint(complex.real(), complex.imag(), true);
+    std::cout << "kberga x= " << complex.real() << std::endl;
+    
 }
 
 void mouse(int btn,int state,int x,int y)
@@ -113,6 +143,7 @@ int main(int argc,char** argv)
     glutInitWindowPosition(100, 100);
     glutInitWindowSize(ww,wh);
     glutCreateWindow("Fractal Trajectories");
+    glClearColor(1.0,1.0,1.0,1.0);
     glutDisplayFunc(display);
     glutMouseFunc(mouse);
     glutMainLoop();
