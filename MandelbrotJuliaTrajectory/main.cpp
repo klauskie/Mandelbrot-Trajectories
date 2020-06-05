@@ -23,11 +23,21 @@ std::complex<double> zn(-0.7, 0.45);
 
 std::vector<std::complex<double>> points;
 
-void drawPoint(double x, double y, bool isImportant)
+void drawPoint(double x, double y, int flag)
 {
-    if (isImportant)
+    if (flag == 0)
     {
         glColor3f(1, 0, 0);
+        glBegin(GL_QUADS);
+        glVertex2d(x - 0.02, y - 0.02);
+        glVertex2d(x - 0.02, y + 0.02);
+        glVertex2d(x + 0.02, y + 0.02);
+        glVertex2d(x + 0.02, y - 0.02);
+        glEnd();
+    }
+    else if (flag == -1)
+    {
+        glColor3f(0, 1, 0.5);
         glBegin(GL_QUADS);
         glVertex2d(x - 0.02, y - 0.02);
         glVertex2d(x - 0.02, y + 0.02);
@@ -110,7 +120,7 @@ void trajectoryDisplay()
         return;
     }
 
-    drawPoint(complex.real(), complex.imag(), true);
+    drawPoint(complex.real(), complex.imag(), -1);
 
     for (int i = 0; i < points.size() - 1; i++)
     {
@@ -121,7 +131,7 @@ void trajectoryDisplay()
         double pointBy = points[i + 1].imag();
 
         drawLine(pointAx, pointAy, pointBx, pointBy);
-        drawPoint(pointAx, pointAy, i == 0);
+        drawPoint(pointAx, pointAy, i);
     }
 }
 
@@ -141,43 +151,32 @@ void mouse(int btn, int state, int x, int y)
     }
 
     // Trigger C movement
-    if (btn == GLUT_RIGHT_BUTTON)
+    if (btn == GLUT_RIGHT_BUTTON && state==GLUT_DOWN)
     {
-        if (state == GLUT_UP)
-        {
-            xOrigin = -1;
-        }
-        else
-        {
-            xOrigin = 2;
-        }
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        xOrigin = -1;
+        double nx = (x - 250) * 2 / 500.0;
+        double ny = (250 - y) * 2 / 500.0;
+        
+        //std::cout << points[0].real() << " : " << zn.real() << std::endl;
+        
+        complex.real(nx);
+        complex.imag(ny);
+        //trajectoryDisplay();
+        // Clear screen
+        
+        drawPoint(complex.real(), complex.imag(), true);
     }
 }
 
 void mouseMove(int x, int y)
 {
 
-    // Clear screen
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    drawGrid();
-
-    // this will only be true when the left button is down
-    if (xOrigin == 2)
-    {
-        double nx = (x - 250) * 2 / 500.0;
-        double ny = (250 - y) * 2 / 500.0;
-
-        //std::cout << points[0].real() << " : " << zn.real() << std::endl;
-
-        complex.real(nx);
-        complex.imag(ny);
-        trajectoryDisplay();
-
-        //std::cout << x << " | " << y << " -> " << nx << " | " << ny << std::endl;
-    }
     if (xOrigin == 1)
     {
+        // Clear screen
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
         double nx = (x - 250) * 2 / 500.0;
         double ny = (250 - y) * 2 / 500.0;
 
@@ -185,6 +184,8 @@ void mouseMove(int x, int y)
         zn.imag(ny);
         trajectoryDisplay();
     }
+    
+    drawGrid();
 }
 
 int main(int argc, char **argv)
