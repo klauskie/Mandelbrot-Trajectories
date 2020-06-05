@@ -7,7 +7,7 @@
 //
 
 // NOTES
-// https://stackoverflow.com/questions/20288861/mouse-drag-object-in-opengl-glut
+// https://www.youtube.com/watch?v=FFftmWSzgmk
 
 #include <iostream>
 #include <GLUT/glut.h>
@@ -92,17 +92,16 @@ void drawGrid()
 {
     drawLine(-1, 0, 1, 0);
     drawLine(0, 1, 0, -1);
-    
+
     drawLine(0.5, 0.02, 0.5, -0.02);
     drawLine(-0.5, 0.02, -0.5, -0.02);
-    
+
     drawLine(-0.02, 0.5, 0.02, 0.5);
     drawLine(-0.02, -0.5, 0.02, -0.5);
-    
-    
-    renderBitmapString(0.25, -0.8, GLUT_BITMAP_HELVETICA_12, "(R) Zo = [" + std::to_string(zn.real()) + " : " + std::to_string(zn.imag()) + "]" );
+
+    renderBitmapString(0.25, -0.8, GLUT_BITMAP_HELVETICA_12, "(R) Zo = [" + std::to_string(zn.real()) + " : " + std::to_string(zn.imag()) + "]");
     renderBitmapString(0.25, -0.9, GLUT_BITMAP_HELVETICA_12, "(L) C   = [" + std::to_string(complex.real()) + " : " + std::to_string(complex.imag()) + "]");
-    
+
     glFlush();
 }
 
@@ -184,7 +183,7 @@ void mouseMove(int x, int y)
     {
         // Clear screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
+
         double nx = (x - 250) * 2 / 500.0;
         double ny = (250 - y) * 2 / 500.0;
 
@@ -192,20 +191,20 @@ void mouseMove(int x, int y)
         complex.imag(ny);
         trajectoryDisplay();
     }
-    
+
     if (xOrigin == 2)
     {
         // Clear screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
+
         double nx = (x - 250) * 2 / 500.0;
         double ny = (250 - y) * 2 / 500.0;
-        
+
         zn.real(nx);
         zn.imag(ny);
         trajectoryDisplay();
     }
-    
+
     drawGrid();
 }
 
