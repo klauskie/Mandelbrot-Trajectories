@@ -2,8 +2,8 @@
 //  main.cpp
 //  MandelbrotJuliaTrajectory
 //
-//  Created by Klaus Kientzle on 6/1/20.
 //  Copyright © 2020 Klaus Kientzle. All rights reserved.
+//  Copyright © 2020 Luis Sanchez. All rights reserved.
 //
 
 // NOTES
@@ -19,14 +19,17 @@ int ww = 500, wh = 500;
 int xOrigin = -1;
 
 std::complex<double> complex(0.0, 0.0);
-std::complex<double> zn(-0.7, 0.45);
+std::complex<double> zn(0.0, 0.0);
 
 std::vector<std::complex<double>> points;
+
+void renderBitmapString(float x, float y, void *font, std::string str);
 
 void drawPoint(double x, double y, int flag)
 {
     if (flag == 0)
     {
+        renderBitmapString(x + 0.03, y + 0.03, GLUT_BITMAP_HELVETICA_18, "Zo");
         glColor3f(1, 0, 0);
         glBegin(GL_QUADS);
         glVertex2d(x - 0.02, y - 0.02);
@@ -37,6 +40,7 @@ void drawPoint(double x, double y, int flag)
     }
     else if (flag == -1)
     {
+        renderBitmapString(x + 0.03, y + 0.03, GLUT_BITMAP_HELVETICA_18, "C");
         glColor3f(0, 1, 0.5);
         glBegin(GL_QUADS);
         glVertex2d(x - 0.02, y - 0.02);
@@ -74,14 +78,13 @@ void display()
     glFlush();
 }
 
-void renderBitmapString(float x, float y, void *font, char *string)
+void renderBitmapString(float x, float y, void *font, std::string str)
 {
-    char *c;
     glRasterPos2f(x, y);
     glColor3i(1, 1, 1);
-    for (c = string; *c != '\0'; c++)
+    for (int i = 0; i < str.size(); i++)
     {
-        glutBitmapCharacter(font, *c);
+        glutBitmapCharacter(font, str[i]);
     }
 }
 
@@ -89,12 +92,22 @@ void drawGrid()
 {
     drawLine(-1, 0, 1, 0);
     drawLine(0, 1, 0, -1);
+    
+    drawLine(0.5, 0.02, 0.5, -0.02);
+    drawLine(-0.5, 0.02, -0.5, -0.02);
+    
+    drawLine(-0.02, 0.5, 0.02, 0.5);
+    drawLine(-0.02, -0.5, 0.02, -0.5);
+    
+    
+    renderBitmapString(0.25, -0.8, GLUT_BITMAP_HELVETICA_12, "(R) Zo = [" + std::to_string(zn.real()) + " : " + std::to_string(zn.imag()) + "]" );
+    renderBitmapString(0.25, -0.9, GLUT_BITMAP_HELVETICA_12, "(L) C   = [" + std::to_string(complex.real()) + " : " + std::to_string(complex.imag()) + "]");
+    
     glFlush();
 }
 
 void trajectoryCalculation()
 {
-    std::cout << "ZN OG: " << zn.real() << " | " << zn.imag() << std::endl;
     std::complex<double> zSqr(0.0, 0.0);
     points.clear();
 
@@ -202,7 +215,7 @@ int main(int argc, char **argv)
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
     glutInitWindowPosition(100, 100);
     glutInitWindowSize(ww, wh);
-    glutCreateWindow("Fractal Trajectories");
+    glutCreateWindow("Fractal Trajectories - Kientzle & Sanchez");
     glClearColor(1.0, 1.0, 1.0, 1.0);
 
     glutDisplayFunc(display);
