@@ -16,10 +16,8 @@
 #include <cmath>
 
 int ww=500,wh=500;
-int xi,yi,xf,yf;
-const double PI = 3.1416;
 
-std::complex<double> complex(0.31, 0.45);
+std::complex<double> complex(-0.31, 0.45);
 std::complex<double> zn(-0.7, 0.45);
 
 std::vector<std::complex<double>> points;
@@ -27,7 +25,6 @@ std::vector<std::complex<double>> points;
 void drawPoint(double x, double y, bool isImportant)
 {
     if (isImportant) {
-        std::cout << "drawPoint x= " << x << std::endl;
         glColor3f(1, 0, 0);
         glBegin(GL_QUADS);
             glVertex2d(x-0.02, y-0.02);
@@ -76,6 +73,13 @@ void renderBitmapString(float x,float y,void *font,char *string) {
     }
 }
 
+void drawGrid()
+{
+    drawLine(-1, 0, 1, 0);
+    drawLine(0, 1, 0, -1);
+    glFlush();
+}
+
 void trajectoryCalculation()
 {
     std::complex<double> zSqr(0.0, 0.0);
@@ -101,6 +105,8 @@ void trajectoryDisplay()
         return;
     }
     
+    drawPoint(complex.real(), complex.imag(), true);
+    
     for (int i = 0; i < points.size() - 1; i++) {
         double pointAx = points[i].real();
         double pointAy = points[i].imag();
@@ -111,10 +117,6 @@ void trajectoryDisplay()
         drawLine(pointAx, pointAy, pointBx, pointBy);
         drawPoint(pointAx, pointAy, i==0);
     }
-    
-    drawPoint(complex.real(), complex.imag(), true);
-    std::cout << "kberga x= " << complex.real() << std::endl;
-    
 }
 
 void mouse(int btn,int state,int x,int y)
@@ -122,7 +124,7 @@ void mouse(int btn,int state,int x,int y)
     // Clear screen
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
-    // Draw line from origin to point
+    // Draw complete trajectory
     if(btn==GLUT_LEFT_BUTTON && state==GLUT_DOWN)
     {
         double nx = (x - 250) * 2 / 500.0;
@@ -133,6 +135,7 @@ void mouse(int btn,int state,int x,int y)
         std::complex<double> newZn(nx, ny);
         zn = newZn;
         trajectoryDisplay();
+        drawGrid();
     }
 }
 
