@@ -96,18 +96,27 @@ void drawGrid()
 
 void trajectoryCalculation()
 {
+    std::cout << "ZN OG: " << zn.real() << " | " << zn.imag() << std::endl;
     std::complex<double> zSqr(0.0, 0.0);
     points.clear();
+    
+    //zn.real(0.0);
+    //zn.imag(0.0);
+    
+    std::cout << "LIST SIZE: " << points.size() << std::endl;
 
     points.push_back(zn);
+    std::cout << "LIST [0]: " << points[0].real() << " | " << points[0].imag() << std::endl;
 
-    int i = 50;
+    std::complex<double> tempZn = zn;
+    int i = 8;
     while (i != 0)
     {
         --i;
-        zSqr = pow(zn, 2);
-        zn = zSqr + complex;
-        points.push_back(zn);
+        zSqr = pow(tempZn, 2);
+        tempZn = zSqr + complex;
+        std::cout << "Zn = " << zSqr.real() << " | " << zSqr.imag() << "        Complex =  " << complex.real() << " | " << complex.imag() << std::endl;
+        points.push_back(tempZn);
     }
 }
 
@@ -117,6 +126,7 @@ void trajectoryDisplay()
 
     if (points.size() == 0)
     {
+        std::cout << "IS EMPTY" << std::endl;
         return;
     }
 
@@ -160,8 +170,8 @@ void mouse(int btn, int state, int x, int y)
         
         //std::cout << points[0].real() << " : " << zn.real() << std::endl;
         
-        complex.real(nx);
-        complex.imag(ny);
+        zn.real(nx);
+        zn.imag(ny);
         //trajectoryDisplay();
         // Clear screen
         
@@ -180,8 +190,8 @@ void mouseMove(int x, int y)
         double nx = (x - 250) * 2 / 500.0;
         double ny = (250 - y) * 2 / 500.0;
 
-        zn.real(nx);
-        zn.imag(ny);
+        complex.real(nx);
+        complex.imag(ny);
         trajectoryDisplay();
     }
     
