@@ -16,7 +16,8 @@
 #include <cmath>
 
 int ww = 500, wh = 500;
-int xOrigin = -1;
+int mouseDragState = -1;
+bool hideLines = false;
 
 std::complex<double> complex(0.0, 0.0);
 std::complex<double> zn(0.0, 0.0);
@@ -101,6 +102,9 @@ void drawGrid()
 
     renderBitmapString(0.25, -0.8, GLUT_BITMAP_HELVETICA_12, "(R) Zo = [" + std::to_string(zn.real()) + " : " + std::to_string(zn.imag()) + "]");
     renderBitmapString(0.25, -0.9, GLUT_BITMAP_HELVETICA_12, "(L) C   = [" + std::to_string(complex.real()) + " : " + std::to_string(complex.imag()) + "]");
+    
+    std::string hideLineStr = hideLines ? "true" : "false";
+    renderBitmapString(-0.95, 0.9, GLUT_BITMAP_HELVETICA_12, "Hide lines [SPACE BAR]: " + hideLineStr);
 
     glFlush();
 }
@@ -142,7 +146,9 @@ void trajectoryDisplay()
         double pointBx = points[i + 1].real();
         double pointBy = points[i + 1].imag();
 
-        drawLine(pointAx, pointAy, pointBx, pointBy);
+        if (!hideLines) {
+            drawLine(pointAx, pointAy, pointBx, pointBy);
+        }
         drawPoint(pointAx, pointAy, i);
     }
 }
@@ -154,11 +160,11 @@ void mouse(int btn, int state, int x, int y)
     {
         if (state == GLUT_UP)
         {
-            xOrigin = -1;
+            mouseDragState = -1;
         }
         else
         {
-            xOrigin = 1;
+            mouseDragState = 1;
         }
     }
 
@@ -167,11 +173,11 @@ void mouse(int btn, int state, int x, int y)
     {
         if (state == GLUT_UP)
         {
-            xOrigin = -1;
+            mouseDragState = -1;
         }
         else
         {
-            xOrigin = 2;
+            mouseDragState = 2;
         }
     }
 }
@@ -179,7 +185,7 @@ void mouse(int btn, int state, int x, int y)
 void mouseMove(int x, int y)
 {
 
-    if (xOrigin == 1)
+    if (mouseDragState == 1)
     {
         // Clear screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -192,7 +198,7 @@ void mouseMove(int x, int y)
         trajectoryDisplay();
     }
 
-    if (xOrigin == 2)
+    if (mouseDragState == 2)
     {
         // Clear screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -208,6 +214,18 @@ void mouseMove(int x, int y)
     drawGrid();
 }
 
+void processNormalKeys(unsigned char key, int x, int y) {
+    
+    if (key == 27)
+        exit(0);
+    else if (key==' ') {
+        hideLines = !hideLines;
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        trajectoryDisplay();
+        drawGrid();
+    }
+}
+
 int main(int argc, char **argv)
 {
     glutInit(&argc, argv);
@@ -220,6 +238,7 @@ int main(int argc, char **argv)
     glutDisplayFunc(display);
     glutMouseFunc(mouse);
     glutMotionFunc(mouseMove);
+    glutKeyboardFunc(processNormalKeys);
 
     glutMainLoop();
     return 0;
